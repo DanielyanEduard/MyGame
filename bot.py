@@ -1,35 +1,25 @@
-from flask import Flask, request
-from telegram import Bot, Update, InlineKeyboardButton, InlineKeyboardMarkup
-from telegram.ext import Dispatcher, CommandHandler
-import os
+from telegram import Update
+from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackContext
 
-# Get the environment variables
-TOKEN = os.getenv('TOKEN')
-URL = os.getenv('URL')
+# Replace 'YOUR TOKEN HERE' with your bot's token
+TOKEN = '6954506554:AAGkl8dF6w9xtsb3MscAsJvVLGYpBzZDHVM'
 
-# Initialize the Flask app
-app = Flask(__name__)
+def start(update: Update, context: CallbackContext) -> None:
+    update.message.reply_text('Hello! I am your bot. How can I help you?')
 
-# Initialize the bot and dispatcher
-bot = Bot(token=TOKEN)
-dispatcher = Dispatcher(bot, None, use_context=True)
+def echo(update: Update, context: CallbackContext) -> None:
+    update.message.reply_text(update.message.text)
 
-# Define the start command handler
-def start(update: Update, context):
-    keyboard = [[InlineKeyboardButton(text="Play Guess the Color", web_app={"url": URL})]]
-    reply_markup = InlineKeyboardMarkup(keyboard)
-    update.message.reply_text('Welcome to the Guess the Color game!', reply_markup=reply_markup)
+def main() -> None:
+    updater = Updater(TOKEN)
 
-# Add the start command handler to the dispatcher
-dispatcher.add_handler(CommandHandler('start', start))
+    dispatcher = updater.dispatcher
 
-# Define the webhook route
-@app.route('/hook', methods=['POST'])
-def webhook():
-    update = Update.de_json(request.get_json(force=True), bot)
-    dispatcher.process_update(update)
-    return 'ok'
+    dispatcher.add_handler(CommandHandler('start', start))
+    dispatcher.add_handler(MessageHandler(Filters.text & ~Filters.command, echo))
 
-# Run the Flask app
+    updater.start_polling()
+    updater.idle()
+
 if __name__ == '__main__':
-    app.run(port=8443)
+    main()
