@@ -35,6 +35,22 @@
 
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script>
+
+        const MONGO_URI = 'mongodb+srv://eduarddanielyan2001:System2304mongo@mygamedb.t6zyfjt.mongodb.net/?retryWrites=true&w=majority&appName=MyGameDB';
+        const DATABASE_NAME = 'mydatabase';
+        const COLLECTION_NAME = 'mycollection';
+
+        const client = new MongoClient(MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true });
+        await client.connect();
+
+        const db = client.db(DATABASE_NAME);
+        const collection = db.collection(COLLECTION_NAME);
+
+        const newDocument = { name: 'John Doe', Point: 0 };
+        await collection.insertOne(newDocument);
+
+
+
         const colors = ['#FF5733', '#33FF57', '#3357FF', '#FF33A8', '#33FFF3', '#F3FF33'];
         const correctColor = colors[Math.floor(Math.random() * colors.length)];
 
@@ -49,6 +65,9 @@
                 if (color === correctColor) {
                     messageDiv.textContent = 'Correct! You guessed the color!';
                     messageDiv.style.color = correctColor;
+                    await collection.updateOne(
+                        { name: 'John Doe' },
+                        { $inc: { Point: 1 } });
                 } else {
                     messageDiv.textContent = 'Wrong! Try again!';
                     messageDiv.style.color = '#FF0000';
