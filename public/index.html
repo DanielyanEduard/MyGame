@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guess the Color Game</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f0f0f0;
+        }
+        h1 {
+            color: #333;
+        }
+        .color-box {
+            display: inline-block;
+            width: 100px;
+            height: 100px;
+            margin: 10px;
+            cursor: pointer;
+            border-radius: 10px;
+            border: 2px solid #ccc;
+        }
+        #message {
+            margin-top: 20px;
+            font-size: 1.2em;
+        }
+    </style>
+</head>
+<body>
+    <h1>Guess the Color!</h1>
+    <div id="colorContainer"></div>
+    <div id="message"></div>
+
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script>
+        const colors = ['#FF5733', '#33FF57', '#3357FF', '#FF33A8', '#33FFF3', '#F3FF33'];
+        const correctColor = colors[Math.floor(Math.random() * colors.length)];
+
+        const colorContainer = document.getElementById('colorContainer');
+        const messageDiv = document.getElementById('message');
+
+        colors.forEach(color => {
+            const colorBox = document.createElement('div');
+            colorBox.className = 'color-box';
+            colorBox.style.backgroundColor = color;
+            colorBox.onclick = () => {
+                if (color === correctColor) {
+                    messageDiv.textContent = 'Correct! You guessed the color!';
+                    messageDiv.style.color = correctColor;
+                } else {
+                    messageDiv.textContent = 'Wrong! Try again!';
+                    messageDiv.style.color = '#FF0000';
+                }
+            };
+            colorContainer.appendChild(colorBox);
+        });
+
+        Telegram.WebApp.onEvent('mainButtonClicked', function() {
+            Telegram.WebApp.close();
+        });
+    </script>
+</body>
+</html>
